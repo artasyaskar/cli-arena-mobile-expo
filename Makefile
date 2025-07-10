@@ -8,7 +8,7 @@ SHELL := /bin/bash
 # SUPABASE_PROJECT_ID := your-project-id
 
 # Docker Compose command
-DOCKER_COMPOSE := docker-compose
+DOCKER_COMPOSE := sudo docker-compose
 
 # App service name in docker-compose.yml
 APP_SERVICE_NAME := app
@@ -79,18 +79,18 @@ supabase-init-db:
 build:
 	@echo "Building the application (TypeScript, Kotlin, Swift)..."
 	@echo "Running 'make build' inside the Docker container..."
-	$(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) bash -c "echo 'TODO: Implement actual build process for TS, Kotlin, Swift'"
-	# Example: $(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) npm run build
-	# Example: $(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) ./gradlew build (for Kotlin/Android)
-	# Example: $(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) xcodebuild build (for Swift/iOS, requires macOS or complex Docker setup)
+	$(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) bash -c "echo 'TODO: Implement actual build process for TS, Kotlin, Swift'"
+	# Example: $(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) npm run build
+	# Example: $(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) ./gradlew build (for Kotlin/Android)
+	# Example: $(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) xcodebuild build (for Swift/iOS, requires macOS or complex Docker setup)
 
 .PHONY: serve
 serve:
 	@echo "Serving the application CLI..."
 	@echo "Running 'make serve' inside the Docker container..."
 	# This should keep the terminal interactive for CLI usage
-	$(DOCKER_COMPOSE) exec $(APP_SERVICE_NAME) bash -c "echo 'TODO: Implement actual serve command for the CLI application'"
-	# Example: $(DOCKER_COMPOSE) exec $(APP_SERVICE_NAME) node dist/index.js
+	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE_NAME) bash -c "echo 'TODO: Implement actual serve command for the CLI application'"
+	# Example: $(DOCKER_COMPOSE) run --rm $(APP_SERVICE_NAME) node dist/index.js
 	# Or, if your Dockerfile's CMD is set up for the CLI:
 	# $(DOCKER_COMPOSE) run --rm $(APP_SERVICE_NAME) <command-if-not-default-cmd>
 
@@ -98,17 +98,17 @@ serve:
 test:
 	@echo "Running tests..."
 	@echo "Running 'make test' inside the Docker container..."
-	$(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) bash -c "echo 'TODO: Implement actual test execution (Jest, KotlinTest, XCTest)'"
-	# Example: $(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) npm test
-	# Example: $(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) ./gradlew test (for Kotlin/Android)
+	$(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) bash -c "echo 'TODO: Implement actual test execution (Jest, KotlinTest, XCTest)'"
+	# Example: $(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) npm test
+	# Example: $(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) ./gradlew test (for Kotlin/Android)
 
 .PHONY: lint
 lint:
 	@echo "Linting code (TypeScript, Kotlin, Swift)..."
 	@echo "Running 'make lint' inside the Docker container..."
-	$(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) bash -c "echo 'TODO: Implement actual linting commands (ESLint, ktlint, SwiftLint)'"
-	# Example: $(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) npm run lint
-	# Example: $(DOCKER_COMPOSE) exec -T $(APP_SERVICE_NAME) ./gradlew ktlintCheck (for Kotlin/Android)
+	$(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) bash -c "echo 'TODO: Implement actual linting commands (ESLint, ktlint, SwiftLint)'"
+	# Example: $(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) npm run lint
+	# Example: $(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) ./gradlew ktlintCheck (for Kotlin/Android)
 
 # ------------------------------------------------------------------------------
 # Supabase Docker Compose Management
