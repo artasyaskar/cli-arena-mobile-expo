@@ -6,11 +6,11 @@ This private repository contains 12 ultra-challenging CLI-based mobile developme
 It is designed to benchmark AI agents on realistic, production-quality development problems  
 involving Kotlin/Swift, Expo, and Supabase-local.
 
-> ❗ This is a CLI-only benchmark. No graphical UI is included.
+>  This is a CLI-only benchmark. No graphical UI is included.
 
 ---
 
-## 📦 Stack
+##  Stack
 
 - **Languages**: Kotlin (Android), Swift (iOS), TypeScript
 - **Framework**: Expo (logic-level only)
@@ -22,7 +22,7 @@ involving Kotlin/Swift, Expo, and Supabase-local.
 
 ---
 
-## 📁 Repository Layout
+##  Repository Layout
 
 ```bash
 cli-arena-mobile-expo/
@@ -44,7 +44,7 @@ cli-arena-mobile-expo/
 
 ---
 
-## 🛠️ Makefile Commands
+##  Makefile Commands
 
 Run all development commands from the project root.
 
@@ -58,7 +58,7 @@ make lint       # Check code quality (Swift, Kotlin, TS linters)
 
 ---
 
-## 🚀 Quickstart
+##  Quickstart
 
 ```bash
 # Clone the repo
@@ -79,7 +79,7 @@ Ensure Docker and Supabase CLI are installed.
 
 ---
 
-## 📌 Project Saturn Summary
+##  Project Saturn Summary
 
 Project Saturn is a high-stakes AI benchmarking initiative.  
 Each task in this repo simulates a complex real-world mobile development challenge.  
@@ -87,7 +87,7 @@ AI agents are scored based on correctness, efficiency, and code quality under CL
 
 ---
 
-## 📚 Task Index (12 Tasks)
+##  Task Index (12 Tasks)
 
 | ID                          | Title                           | Difficulty | Time (min) | Tags                        |
 |----------------------------|----------------------------------|------------|------------|-----------------------------|
@@ -106,7 +106,7 @@ AI agents are scored based on correctness, efficiency, and code quality under CL
 
 ---
 
-## 🧪 Testing & CI
+##  Testing & CI
 
 CI pipeline is located at `.github/workflows/ci.yml`.
 
@@ -120,14 +120,14 @@ CI completes in ≤ 10 minutes using `ubuntu-latest` runner.
 
 ---
 
-## 📄 License
+##  License
 
 This repository is licensed under MIT or Apache-2.0.  
 Choose the one that fits your intended reuse policy.
 
 ---
 
-## 👤 Maintainer
+##  Maintainer
 
 Developed for Project Saturn  
 Author: artasyaskar@gmail.com
