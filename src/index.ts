@@ -27,10 +27,12 @@ program
 
 // Fallback for unknown commands
 program.on('command:*', () => {
-  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+  console.error(
+    'Invalid command: %s\nSee --help for a list of available commands.',
+    program.args.join(' '),
+  );
   process.exit(1);
 });
-
 
 async function main() {
   // Parse arguments
@@ -42,7 +44,7 @@ async function main() {
   }
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(`An unexpected error occurred: ${error.message}`);
   if (error.stack) {
     // console.error(error.stack); // Optionally log stack for debugging

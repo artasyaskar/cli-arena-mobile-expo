@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES2020", // Target modern Node.js versions
-    "module": "commonjs", // Standard module system for Node.js
-    "lib": ["ES2020", "DOM"], // Include DOM for potential web-related utilities if ever needed by tasks
-    "declaration": true, // Generate .d.ts files
-    "outDir": "./dist", // Output directory for compiled JavaScript
-    "rootDir": "./src", // Root directory of source files
-    "strict": true, // Enable all strict type-checking options
-    "esModuleInterop": true, // Enables emit interoperability between CommonJS and ES Modules
-    "skipLibCheck": true, // Skip type checking of declaration files
-    "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file
-    "resolveJsonModule": true, // Allow importing JSON files
-    "moduleResolution": "node", // How modules get resolved (classic vs node)
-    "sourceMap": true, // Generate source maps for debugging
-    // Recommended options:
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020", "DOM"],
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": ".", // ✅ FIXED: allow both src/ and tests/ as roots
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
@@ -25,17 +24,17 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".", // Base directory for path aliases
-    "paths": { // Path aliases for cleaner imports
+    "baseUrl": ".", 
+    "paths": {
       "@/*": ["src/*"]
     }
   },
   "include": [
-    "src/**/*.ts" // Which files to include in compilation
+    "src/**/*.ts",
+    "tests/**/*.ts" // ✅ ADDED: include test files for ts-jest
   ],
   "exclude": [
-    "node_modules", // Exclude external libraries
-    "dist", // Exclude compiled output
-    "tests/**/*.ts" // Exclude test files from main compilation (tests will have their own tsconfig or use ts-jest)
+    "node_modules",
+    "dist"
   ]
 }

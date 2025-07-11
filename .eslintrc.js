@@ -1,3 +1,6 @@
+// .eslintrc.js
+
+/** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -10,7 +13,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
-    'prettier', // Make sure this is last to override other formatting rules
+    'plugin:prettier/recommended' // ✅ includes "prettier" rules and sets prettier/prettier to error
   ],
   env: {
     node: true,
@@ -18,27 +21,28 @@ module.exports = {
     es2021: true,
   },
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json', // Link to your tsconfig.json for type-aware linting
+    project: './tsconfig.json', // ✅ needed for rules like `no-floating-promises`
+    tsconfigRootDir: __dirname, // ✅ ensure ESLint resolves tsconfig properly
   },
   rules: {
-    // Prettier rules
-    'prettier/prettier': 'warn', // Show Prettier issues as warnings
+    // Prettier will handle formatting
+    'prettier/prettier': 'warn',
 
-    // TypeScript specific rules
+    // TypeScript
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    '@typescript-eslint/no-explicit-any': 'warn', // Warn on 'any' type
-    '@typescript-eslint/explicit-module-boundary-types': 'off', // Allows inferred return types for functions
-    '@typescript-eslint/no-inferrable-types': 'off', // Allows explicit type declarations even when inferred
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-inferrable-types': 'off',
 
-    // General ESLint rules
-    'no-console': 'off', // Allow console.log for CLI tools, but consider a dedicated logger
-    'no-unused-vars': 'off', // Handled by @typescript-eslint/no-unused-vars
-    'eqeqeq': ['error', 'always'], // Require === and !==
-    'no-implicit-coercion': 'error', // Disallow shorthand type conversions
+    // JS general
+    'no-console': 'off',
+    'no-unused-vars': 'off', // handled by TS plugin
+    'eqeqeq': ['error', 'always'],
+    'no-implicit-coercion': 'error',
 
-    // Jest specific rules
+    // Jest
     'jest/no-disabled-tests': 'warn',
     'jest/no-focused-tests': 'error',
     'jest/no-identical-title': 'error',
@@ -54,8 +58,8 @@ module.exports = {
     'node_modules/',
     'dist/',
     'coverage/',
-    '*.js', // Ignore JS files in the root (like this one, or others if any) unless explicitly included
-    '!.eslintrc.js', // Don't ignore this file itself
-    'jest.config.js' // Assuming Jest config is JS
+    '*.js',            // Ignore plain JS files
+    '!*.config.js',     // But allow config JS files like .eslintrc.js, jest.config.js
+    '*.d.ts',           // Ignore declaration files
   ],
 };
