@@ -1,0 +1,66 @@
+id: cli-offline-form-replayer
+title: "CLI Offline Form Entry and Replay System with Validation and Conflict Handling"
+difficulty: ultra-hard
+estimated_time: 260
+tags: [cli, offline, forms, data-entry, replay, validation, conflict-resolution, json]
+description: |
+  Develop a CLI tool that allows users to fill out predefined forms while offline.
+  The form entries are saved locally and can be replayed (submitted to a remote API)
+  when an internet connection is available. The system must include robust form definition,
+  input validation, secure local storage for pending submissions, retry mechanisms,
+  and basic conflict resolution.
+
+  Key Features and Complexities:
+  1.  **Form Definition (Schemas):**
+      - Forms are defined by JSON schemas stored in a `form_schemas/` directory.
+      - Each schema defines:
+          - `formId`: A unique identifier for the form.
+          - `title`: A human-readable title for the form.
+          - `fields`: An array of field objects, each specifying:
+              - `name`: The field's programmatic name.
+              - `label`: The prompt displayed to the user.
+              - `type`: Data type (e.g., "text", "email", "number", "date", "select", "textarea").
+              - `required`: Boolean indicating if the field is mandatory.
+              - `validation`: (Optional) Object with validation rules (e.g., `regex`, `minLength`, `maxLength`, `minValue`, `maxValue`). For "select", an `options` array.
+              - `defaultValue`: (Optional) Default value for the field.
+  2.  **Form Entry (`fill` command):**
+      - `fill <formId>`: Initiates an interactive session to fill out the specified form.
+      - Dynamically generates prompts based on the form schema.
+      - Performs input validation in real-time or upon attempting to save the entry.
+      - Saves the completed form data (with a unique submission ID, timestamp, formId, and form data) to a local, persistent queue (e.g., a JSON file in `~/.local/share/cli-form-replayer/pending_submissions.json`).
+  3.  **Local Queue Management:**
+      - Securely store pending submissions. For this task, file permissions (600) on the queue file are acceptable.
+      - Each queued item should track its submission attempts and last attempt status.
+  4.  **Submission Replay (`replay` command):**
+      - `replay [--all | --id <submissionId>]`: Attempts to submit queued entries to a `mock_submission_api.sh`.
+      - `--all`: Attempts to submit all pending entries.
+      - `--id <submissionId>`: Attempts to submit a specific entry by its ID.
+      - **Retry Logic:** If a submission fails due to a retryable error (e.g., simulated network error), the CLI should retry with exponential backoff (configurable attempts and delay).
+      - **Conflict Handling:** If the mock API indicates a conflict (e.g., "duplicate entry based on unique field"), the CLI should mark the submission appropriately (e.g., 'conflict') and not retry indefinitely. The user should be able to inspect and potentially resolve/discard such conflicts.
+  5.  **Status and Management:**
+      - `status`: Displays a summary of pending, failed, and successfully replayed submissions.
+      - `list-pending`: Shows details of all submissions currently in the queue.
+      - `view-submission <submissionId>`: Shows the data and status of a specific submission.
+      - `delete-submission <submissionId>`: Removes a submission from the queue (e.g., a conflicted one).
+  6.  **Mock Submission API (`mock_submission_api.sh`):**
+      - Simulates a remote API endpoint.
+      - Accepts POST requests with form data.
+      - Returns success/failure responses, including:
+          - HTTP 201 Created (Success)
+          - HTTP 400 Bad Request (Validation errors from server-side)
+          - HTTP 409 Conflict (Duplicate entry)
+          - HTTP 500 Internal Server Error (Simulated transient error)
+          - HTTP 503 Service Unavailable (Simulated transient error)
+      - Maintains a simple state to detect duplicate submissions for conflict testing.
+
+success_criteria:
+  - CLI can list available forms based on schemas in `form_schemas/`.
+  - `fill` command correctly prompts for input based on form schema, validates input, and saves valid entries to a local queue.
+  - `replay` command successfully submits queued entries to the mock API.
+  - Retry logic with exponential backoff is implemented for transient API errors.
+  - Basic conflict handling (e.g., marking duplicates) is functional.
+  - `status`, `list-pending`, `view-submission`, `delete-submission` commands work as described.
+  - Local submission queue is persistent across CLI invocations.
+  - All tests pass with >90% coverage, testing form definitions, input validation, queue management, replay success/failure/retry/conflict scenarios, and status commands.
+  - Mock API correctly simulates various server responses.
+  - The solution gracefully handles malformed form schemas or queue files.

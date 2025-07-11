@@ -1,0 +1,50 @@
+id: cli-localized-error-capture
+title: "CLI Framework for Multi-Language Localized Error Capturing and Reporting"
+difficulty: ultra-hard
+estimated_time: 240
+tags: [cli, framework, localization, i18n, error-handling, json]
+description: |
+  Develop a Bash framework/library for capturing and reporting errors with support for
+  multiple languages. This framework will be sourced and used by other CLI tools.
+  It should handle locale detection, loading localized error messages from JSON files,
+  parameter substitution in messages, and fallback to a default language.
+
+  Key features and complexities:
+  1.  **Framework Design:**
+      - The core logic will reside in a `solution.sh` script, designed to be sourced by other scripts.
+      - It will provide functions that other CLI tools can call to report errors (e.g., `report_error <error_code> [param_values...]`).
+  2.  **Localization Files:**
+      - Error messages will be stored in JSON files, organized by locale (e.g., `resources/locales/en/errors.json`, `resources/locales/es/errors.json`).
+      - Each JSON file will contain key-value pairs where keys are error codes (e.g., "E_FILE_NOT_FOUND") and values are the localized error message strings.
+      - Message strings can contain placeholders for dynamic values (e.g., "File '{{filename}}' not found. Attempted operation: {{operation}}.").
+  3.  **Locale Detection:**
+      - Automatically detect the user's preferred locale using environment variables like `LANG`, `LC_ALL`, `LC_MESSAGES`.
+      - Support for simplifying complex locale codes (e.g., `en_US.UTF-8` -> `en_US` -> `en`).
+      - Allow manual override of the locale via an environment variable (e.g., `CLI_ERROR_LOCALE=es`).
+  4.  **Message Loading and Resolution:**
+      - Load the appropriate locale's error messages when an error is reported.
+      - Implement a fallback strategy: if a message for a specific error code is not found in the user's locale, try a more generic version of the locale (e.g., `en_US` -> `en`), and finally fall back to a default language (e.g., English).
+      - If an error code is entirely unknown, provide a generic error message that includes the unknown code.
+  5.  **Parameterized Error Messages:**
+      - The `report_error` function must accept parameters that correspond to placeholders in the error messages.
+      - Placeholders should be clearly defined (e.g., `{{param_name}}`).
+      - The framework must substitute these placeholders with the provided values.
+      - Handle cases where too few or too many parameters are provided for a given message.
+  6.  **Error Reporting:**
+      - The `report_error` function should print the final, localized, and parameterized error message to `stderr`.
+      - Optionally, include the error code in the output for easier debugging (e.g., "[E_FILE_NOT_FOUND] File 'foo.txt' not found."). This can be configurable.
+  7.  **Extensibility:**
+      - The framework should be designed to easily add new error codes or support new languages by simply adding/editing JSON files.
+  8.  **Demonstration:**
+      - An `example_cli_tool.sh` will be provided to demonstrate how to integrate and use the error reporting framework. This tool will intentionally trigger various errors to showcase localization.
+
+success_criteria:
+  - `solution.sh` provides a sourceable framework with a `report_error` function.
+  - Locale detection correctly identifies user's locale and allows override.
+  - Error messages are loaded from appropriate JSON files based on the detected/overridden locale.
+  - Parameter substitution in error messages works correctly for various numbers of parameters.
+  - Fallback logic (specific locale -> generic locale -> default language -> generic error) is implemented and functional.
+  - `example_cli_tool.sh` demonstrates usage and successfully displays localized errors based on simulated locale changes.
+  - All tests pass with >90% coverage, verifying locale detection, message loading, parameterization, fallback mechanisms, and integration with the example tool.
+  - The framework is robust against missing files, malformed JSON (for error files), or incorrect usage.
+  - Clear documentation (in comments or `AGENTS.md` if applicable) on how to use the framework and add new errors/languages.

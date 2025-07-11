@@ -1,0 +1,49 @@
+id: cli-user-location-audit
+title: "Secure CLI User Geolocation Logging with Temporal Filtering, Anonymization, and Geo-fencing"
+difficulty: ultra-hard
+estimated_time: 230
+tags: [cli, geolocation, audit, logging, security, anonymization, geofencing, temporal-filtering]
+description: |
+  Implement a CLI tool for securely logging user geolocation data. The tool must
+  support appending new location entries, querying logs with advanced filters,
+  anonymizing data for export, and basic geo-fencing alerts.
+
+  Key features and complexities:
+  1.  **Secure Append-Only Logging:**
+      - Location data (timestamp, userId, latitude, longitude, accuracy, optional deviceId, optional custom metadata JSON string) is logged to a file.
+      - Each log entry should be a JSON object on a new line.
+      - Implement a mechanism to ensure append-only integrity if feasible within bash (e.g., line checksums, or relying on file system permissions primarily). Focus on making it hard to tamper unnoticed.
+      - Log file path should be configurable, default to a secure location (e.g., `~/.local/share/cli-location-audit/audit.log`).
+  2.  **Data Input & Validation:**
+      - CLI command to add a new location entry with all necessary fields.
+      - Validate input data types and ranges (e.g., latitude between -90 and 90).
+  3.  **Advanced Log Querying & Filtering:**
+      - Filter logs by `userId`.
+      - Filter logs by a date/time range (e.g., all entries for `user_X` between `YYYY-MM-DDTHH:MM:SSZ` and `YYYY-MM-DDTHH:MM:SSZ`).
+      - Support for combining filters (e.g., user AND time range).
+      - Output query results in a readable format (e.g., formatted JSON or CSV).
+  4.  **Data Anonymization:**
+      - Command to export/query logs with anonymization applied.
+      - Anonymization strategies to implement:
+          - **Coordinate Obfuscation:** Slightly alter latitude/longitude (e.g., reduce precision, add random noise within a defined radius). Configurable precision/noise level.
+          - **Metadata Stripping:** Option to remove `deviceId` or specific fields from custom metadata.
+          - **UserId Pseudonymization:** Option to replace actual `userId` with a consistent pseudonym (e.g., hash or a lookup mapping for the duration of one query).
+  5.  **Geo-fencing Alerts:**
+      - Ability to define geo-fences (e.g., named rectangular zones: minLat, maxLat, minLon, maxLon) in a separate JSON configuration file.
+      - When adding a new location entry, check if it falls within any defined geo-fence.
+      - If a geo-fence is entered or exited (compared to the user's previous known location, if available in recent log history), log a special "geofence_alert" entry (e.g., userId, fenceName, status: 'entered'/'exited', timestamp).
+      - This requires maintaining some state or querying previous location for transition detection.
+  6.  **Log Management:**
+      - Command to show log file status (size, number of entries).
+      - (Optional) Basic log rotation simulation if log file exceeds a certain size.
+
+success_criteria:
+  - CLI can add validated location entries to an append-only log file (JSON lines).
+  - Log entries include timestamp, userId, lat, lon, accuracy, and optional metadata.
+  - Querying logs by userId and/or date/time range works accurately and efficiently (for reasonably sized logs).
+  - Anonymization features (coordinate obfuscation, metadata stripping, userId pseudonymization) are functional and configurable.
+  - Geo-fences can be defined in a JSON file.
+  - Geo-fence entry/exit alerts are correctly logged when new location data is added and crosses a boundary.
+  - All tests pass with >90% coverage, verifying logging, filtering, anonymization, and geo-fencing logic with various edge cases.
+  - The append-only nature of the log is maintained (as much as feasible in bash, e.g., through file permissions and script logic).
+  - CLI provides clear feedback and handles errors gracefully (e.g., invalid input, file issues).
