@@ -1,0 +1,55 @@
+id: cli-cross-platform-uploads
+title: "Advanced CLI for Parallel Multi-File/Directory Uploads to Supabase Storage with Ignore Patterns and Checksums"
+difficulty: ultra-hard
+estimated_time: 270
+tags: [cli, file-upload, supabase-storage, parallel, checksum, ignore-patterns, cross-platform]
+description: |
+  Implement a robust CLI tool for uploading multiple files and entire directory structures
+  (recursively) to a mock Supabase Storage. The tool must handle large files,
+  perform uploads in parallel, report progress, validate checksums, and respect
+  ignore patterns similar to `.gitignore`.
+
+  Key features and complexities:
+  1.  **File Discovery and Filtering:**
+      - Recursively scan specified local directories for files to upload.
+      - Support for uploading individual files as well.
+      - Implement filtering based on `.supabaseignore` files (if present in the source directory or a parent). These files contain patterns (like `.gitignore`) to exclude certain files/directories. The search for `.supabaseignore` should go up the directory tree from the source path to the repository root (or a defined limit).
+      - More specific `.supabaseignore` files (deeper in the directory tree) take precedence for the paths they cover.
+  2.  **Mock Supabase Storage API Interaction:**
+      - The CLI will interact with `mock_supabase_storage_api.sh`.
+      - **Authentication:** Simulate passing a Supabase API key (service key) for authorization.
+      - **Path Handling:** Upload files to a specified path within a Supabase bucket (e.g., `my-bucket/path/to/file.txt`). The remote path should mirror the local relative path from the source directory.
+      - **Upload Mechanism:**
+          - For each file, the CLI should conceptually request a signed URL (though the mock might simplify this).
+          - Upload the file content (e.g., via a PUT request to the signed URL or a direct POST to a mock endpoint).
+          - The mock API should simulate successful uploads and various errors (e.g., auth failure, quota exceeded, file too large if not chunked, checksum mismatch, path conflict).
+      - **Metadata:** Allow setting `Content-Type` (auto-detected or user-specified) and `Cache-Control` headers for uploaded files.
+      - **Upsert Option:** Support an "upsert" mode (overwrite if exists, create if not). Default to fail if remote file exists unless upsert is true.
+  3.  **Parallel Uploads:**
+      - Implement parallel file uploads using `xargs -P` or Bash background processes (`&` with `wait`).
+      - Configurable degree of parallelism (e.g., `--parallel <N>`).
+  4.  **Large File Handling & Checksums:**
+      - Calculate a checksum (e.g., SHA256) for each local file before upload.
+      - Send this checksum to the mock API. The mock API should (conceptually or actually) verify it. If there's a mismatch, the upload for that file fails.
+      - While true network chunking for a single large file to Supabase Storage (which typically uses single PUTs) is complex, the solution should be able to handle large files without memory issues (e.g., by streaming data if possible with `curl` or the chosen upload mechanism). The mock API can simulate "chunked upload" if desired for testing this aspect, but the primary goal is reliable upload of large files.
+  5.  **Progress Reporting:**
+      - Display overall progress: number of files found, number processed, number successful, number failed.
+      - Display total bytes to upload and bytes uploaded so far.
+      - For parallel uploads, clear individual file status updates might be challenging but desirable if feasible (e.g., "Uploading file X [Y%]... Done/Failed").
+  6.  **Dry Run Mode:**
+      - `dry-run` option: List all files that would be uploaded (respecting ignore patterns), their target paths, and any potential issues (e.g., conflicts if not upserting) without actually performing uploads.
+  7.  **Configuration:**
+      - Command-line arguments for source path(s), target Supabase bucket/path, parallelism, API key, upsert, Content-Type, Cache-Control.
+
+success_criteria:
+  - CLI correctly discovers files from directories and individual paths.
+  - `.supabaseignore` patterns are correctly applied to exclude files/directories.
+  - Parallel uploads are functional and configurable.
+  - Checksums are calculated locally and (conceptually) validated by the mock API.
+  - Large files are handled reliably (e.g., streamed if possible, mock API can simulate limits if not handled by chunking).
+  - Progress reporting provides meaningful feedback on the upload process.
+  - Dry-run mode accurately reflects intended actions and file statuses.
+  - CLI interacts correctly with the mock Supabase Storage API, including auth, path construction, metadata setting, and error handling (e.g., checksum mismatch, quota error).
+  - Upsert option works as expected (overwrite vs. fail on conflict).
+  - All tests pass with >90% coverage, verifying discovery, filtering, parallelism, checksums, progress, error handling, and API interactions.
+  - Solution is robust and handles edge cases like empty directories, invalid ignore patterns, or API unavailability.
