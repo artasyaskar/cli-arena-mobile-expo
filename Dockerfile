@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Install basic dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
     curl \
     git \
     gnupg \
@@ -13,11 +14,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Add other essential CLI tools if needed
     && rm -rf /var/lib/apt/lists/*
 
-# Install Supabase CLI (for local development, if needed inside the container)
-RUN npm install --global supabase@latest --no-optional
+# Install Supabase CLI
+ARG SUPABASE_CLI_VERSION=v2.30.4
+RUN curl -L -o supabase.deb "https://github.com/supabase/cli/releases/download/${SUPABASE_CLI_VERSION}/supabase_${SUPABASE_CLI_VERSION#v}_linux_amd64.deb" \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends ./supabase.deb \
+    && rm -f supabase.deb \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Expo CLI
-RUN npm install --global expo-cli --no-optional
+RUN npm install --global expo-cli --no-optional --legacy-peer-deps
 
 # TODO: Add Java/Kotlin SDK for Android development
 # Example:
