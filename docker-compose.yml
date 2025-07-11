@@ -1,15 +1,9 @@
 services:
-  # Supabase local development stack
-  # For more details, see: https://supabase.com/docs/guides/cli/local-development
-  # Important: Exposing Supabase services directly like this is for local development ONLY.
-  # Do NOT use this configuration in production.
-
   kong:
     image: kong:2.8.1
     ports:
-      - "54321:8000" # Default Supabase API port
+      - "54321:8000"
     environment:
-      # Kong environment variables (refer to Supabase docs for full list)
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: "/var/lib/kong/kong.yml"
       KONG_DNS_ORDER: "LAST,A,CNAME"
@@ -24,20 +18,20 @@ services:
       - realtime
       - storage-api
     volumes:
-      - ./db/kong.yml:/var/lib/kong/kong.yml # Placeholder for Kong config if needed
+      - ./db/kong.yml:/var/lib/kong/kong.yml
 
   db:
-    image: supabase/postgres:15.8.1.060 # Use a specific version for stability
+    image: supabase/postgres:15.8.1.060
     ports:
-      - "54322:5432" # Default PostgreSQL port
+      - "54322:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password # Replace with a strong, unique password
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres
     volumes:
       - supabase_db_data:/var/lib/postgresql/data
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/10-schema.sql # Load schema on init
-      - ./db/seed.sql:/docker-entrypoint-initdb.d/20-seed.sql     # Load seed data on init
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/10-schema.sql
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/20-seed.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 10s
@@ -45,75 +39,65 @@ services:
       retries: 5
 
   auth:
-    image: supabase/gotrue:v2.120.0 # Use a specific version
+    image: supabase/gotrue:v2.120.0
     environment:
       GOTRUE_API_HOST: "0.0.0.0"
       GOTRUE_API_PORT: "9999"
       GOTRUE_DB_DRIVER: "postgres"
       GOTRUE_DB_DATABASE_URL: "postgresql://postgres:password@db:5432/postgres"
-      # Generate these using `supabase gen keys` or provide your own
       GOTRUE_JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
-      GOTRUE_JWT_EXP: "3600" # 1 hour
-      # Add other GoTrue config as needed (SMTP, external providers, etc.)
+      GOTRUE_JWT_EXP: "3600"
     depends_on:
       db:
         condition: service_healthy
 
   rest:
-    image: postgrest/postgrest:v11.2.2 # Use a specific version
+    image: postgrest/postgrest:v11.2.2
     environment:
       PGRST_DB_URI: "postgresql://postgres:password@db:5432/postgres"
-      PGRST_DB_SCHEMA: "public,storage" # Schemas to expose
+      PGRST_DB_SCHEMA: "public,storage"
       PGRST_DB_ANON_ROLE: "anon"
-      # PGRST_JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long" # Must match GoTrue
     depends_on:
       db:
         condition: service_healthy
 
   realtime:
-    image: supabase/realtime:v2.20.5 # Use a specific version
+    image: supabase/realtime:v2.20.0
     environment:
       DB_HOST: db
       DB_PORT: 5432
-      DB_USER: supabase_admin # This user is created by Supabase CLI internally
-      DB_PASSWORD: password # This password is set by Supabase CLI
+      DB_USER: postgres          # ✅ FIXED
+      DB_PASSWORD: password
       DB_NAME: postgres
       DB_SSL: "false"
       PORT: 4000
-      # JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long" # Must match GoTrue
     depends_on:
       db:
         condition: service_healthy
 
   storage-api:
-    image: supabase/storage-api:v0.47.3 # Use a specific version
+    image: ghcr.io/supabase/storage-api:v1.25.3
     environment:
       STORAGE_BACKEND: "file"
       FILE_STORAGE_BACKEND_PATH: "/var/lib/storage"
-      TENANT_ID: "stub" # Usually 'anon' or project-specific
-      # PGRST_URL: "http://rest:3000" # If using PostgREST for auth
-      # JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long" # Must match GoTrue
+      TENANT_ID: "stub"
     volumes:
       - supabase_storage_data:/var/lib/storage
     depends_on:
       db:
         condition: service_healthy
 
-  # Application service (to be defined more specifically later)
-  # This service will use the Dockerfile created earlier.
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    tty: true # Keep stdin open for CLI interaction
-    stdin_open: true # Keep stdin open
+    tty: true
+    stdin_open: true
     volumes:
-      - .:/app # Mount current directory into /app in the container
+      - .:/app
     depends_on:
       - kong
       - db
-    # Command to run when 'docker-compose up app' is called (can be overridden by Makefile)
-    # command: ["tail", "-f", "/dev/null"] # Keep container running
 
 volumes:
   supabase_db_data:
