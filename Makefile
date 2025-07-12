@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 DOCKER_COMPOSE := sudo docker-compose
-APP_SERVICE_NAME := app
+APP_SERVICE_NAME := cli
 
 .PHONY: all
 all: help
@@ -63,7 +63,7 @@ lint:
 .PHONY: supabase-start
 supabase-start:
 	@echo "Starting Supabase services..."
-	$(DOCKER_COMPOSE) up -d db auth rest realtime storage-api kong
+	$(DOCKER_COMPOSE) up -d db auth rest realtime storage-api api-gateway
 	@sleep 10
 	$(DOCKER_COMPOSE) ps
 	@echo "Supabase services started."
