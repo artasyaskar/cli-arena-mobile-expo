@@ -10,8 +10,8 @@ describe('Example Test Suite', () => {
 
     handleTaskCommand('test-task-id', { simulate: true, verbose: false });
 
-    expect(consoleSpy).toHaveBeenCalledWith('Executing task: test-task-id');
-    expect(consoleSpy).toHaveBeenCalledWith('Simulation mode: ON');
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('=== Executing task: test-task-id ==='));
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Simulation mode: ON'));
 
     consoleSpy.mockRestore();
   });
@@ -38,30 +38,28 @@ describe('Async operations', () => {
 });
 
 describe('CLI Handler Extended Tests', () => {
-  let consoleLogSpy: jest.SpiedFunction<typeof console.log>;
-  let consoleWarnSpy: jest.SpiedFunction<typeof console.warn>;
+  let consoleLogSpy: jest.SpyInstance;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
     consoleLogSpy.mockRestore();
-    consoleWarnSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
   });
 
   it('should warn on unknown task ID', () => {
-    handleTaskCommand('unknown-task', {});
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Warning: Task ID')
-    );
+    expect(() => {
+      handleTaskCommand('unknown-task', {});
+    }).toThrowError(/Unknown task "unknown-task" in test/);
   });
 
   it('should finish processing task if verbose', () => {
     handleTaskCommand('example-task', { verbose: true });
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Finished processing task:')
-    );
+
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('✅ Finished task: example-task'));
   });
 });

@@ -47,9 +47,21 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   username TEXT
 );
 
-CREATE TRIGGER on_auth_user_created
-AFTER INSERT ON auth.users
-FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+-- ========================================
+-- SAFE TRIGGER ON auth.users
+-- ========================================
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+    WHERE c.relname = 'users' AND n.nspname = 'auth'
+  ) THEN
+    CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+  END IF;
+END $$;
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
@@ -273,18 +285,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS set_profiles_updated_at ON public.profiles;
 CREATE TRIGGER set_profiles_updated_at
 BEFORE UPDATE ON public.profiles
 FOR EACH ROW EXECUTE FUNCTION public.trigger_set_timestamp();
 
+DROP TRIGGER IF EXISTS set_secure_items_metadata_updated_at ON public.secure_items_metadata;
 CREATE TRIGGER set_secure_items_metadata_updated_at
 BEFORE UPDATE ON public.secure_items_metadata
 FOR EACH ROW EXECUTE FUNCTION public.trigger_set_timestamp();
 
+DROP TRIGGER IF EXISTS set_background_jobs_updated_at ON public.background_jobs;
 CREATE TRIGGER set_background_jobs_updated_at
 BEFORE UPDATE ON public.background_jobs
 FOR EACH ROW EXECUTE FUNCTION public.trigger_set_timestamp();
 
+DROP TRIGGER IF EXISTS set_file_metadata_updated_at ON public.file_metadata;
 CREATE TRIGGER set_file_metadata_updated_at
 BEFORE UPDATE ON public.file_metadata
 FOR EACH ROW EXECUTE FUNCTION public.trigger_set_timestamp();

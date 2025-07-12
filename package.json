@@ -11,7 +11,7 @@
     "build": "tsc && tsc-alias",
     "watch": "tsc -w",
     "lint": "eslint src --ext .ts",
-    "test": "jest --config tests/jest.config.js",
+    "test": "NODE_ENV=test jest --config tests/jest.config.js --coverage",
     "cli": "ts-node -r tsconfig-paths/register src/index.ts",
     "prepare": "npm run build"
   },

@@ -1,6 +1,8 @@
+version: "3.9"
 services:
   db:
     image: supabase/postgres:15.8.1.060
+    container_name: cli-arena-mobile-expo-db-1
     ports:
       - "54322:5432"
     environment:
