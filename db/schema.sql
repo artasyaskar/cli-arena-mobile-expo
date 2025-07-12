@@ -1,7 +1,29 @@
-SET LOCAL ROLE NONE;
+-- ========================================
+-- CREATE supabase_admin ROLE IF NOT EXISTS
+-- ========================================
+DO
+$$
+BEGIN
+   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_admin') THEN
+      CREATE ROLE supabase_admin;
+   END IF;
+END
+$$;
+
+-- ========================================
+-- RESET ANY PREVIOUSLY SET ROLE
+-- ========================================
+RESET ROLE;
+
+-- ========================================
+-- EXTENSIONS
+-- ========================================
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- ========================================
+-- TABLES AND FUNCTIONS
+-- ========================================
 CREATE TABLE IF NOT EXISTS public.test_table (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
@@ -240,6 +262,9 @@ CREATE POLICY "Allow individual access to own offline form submissions"
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
+-- ========================================
+-- TIMESTAMP TRIGGERS
+-- ========================================
 CREATE OR REPLACE FUNCTION public.trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
