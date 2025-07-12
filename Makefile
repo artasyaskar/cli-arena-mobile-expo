@@ -40,6 +40,11 @@ supabase-init-db:
 	@echo "Using docker-compose volumes for schema.sql + seed.sql."
 	@echo "To force re-initialization, run 'make supabase-stop' then 'make setup' again."
 
+.PHONY: run
+run:
+	@echo "Running CLI..."
+	$(DOCKER_COMPOSE) run --rm $(APP_SERVICE_NAME) npm run cli
+
 .PHONY: build
 build:
 	@echo "Building CLI (TypeScript)..."
