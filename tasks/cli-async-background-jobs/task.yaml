@@ -3,59 +3,14 @@ title: "Advanced CLI for Local Asynchronous Background Job Scheduling and Manage
 difficulty: ultra-hard
 estimated_time: 280
 tags: [cli, background-jobs, async, scheduler, retry-logic, sqlite, process-management]
-description: |
-  Implement a robust CLI tool for scheduling, executing, and managing local background jobs.
-  Jobs are arbitrary shell commands. The system must handle asynchronous execution,
-  persistent state, and sophisticated retry mechanisms for failed jobs.
-
-  Key features and complexities:
-  1.  **Persistent Job Queue & State:**
-      - Utilize SQLite (via `sqlite3` CLI) to store job definitions and their state.
-      - Job attributes: unique job ID, command string, arguments, submission time, scheduled execution time, status (pending, running, succeeded, failed, cancelled, retrying), retry count, max retries, last exit code, stdout/stderr log paths, next retry time.
-      - The SQLite database (`jobs.db`) should be created and managed by the CLI.
-  2.  **Job Submission:**
-      - `add "<command_string>" [--args "<arg1> <arg2>..."] [--now] [--at "<YYYY-MM-DD HH:MM:SS>"] [--delay "<Nd|Nh|Nm|Ns>"] [--max-retries <N>] [--name <job_name>]`:
-          - `--now`: Schedule for immediate processing.
-          - `--at`: Schedule for a specific future time.
-          - `--delay`: Schedule after a relative delay.
-          - `--max-retries`: Override default max retries for this job.
-          - `--name`: Optional human-readable name for the job.
-  3.  **Job Processing (`process-queue` command):**
-      - This command is intended to be run periodically (e.g., by user's cron or manually).
-      - It queries the SQLite DB for pending jobs whose scheduled time has arrived or jobs needing retry.
-      - For each due job:
-          - Mark as 'running' with a unique worker ID/PID.
-          - Execute the job command asynchronously (e.g., `nohup ... &`).
-          - Capture `stdout`, `stderr`, and the exit code of the job. Store paths to these logs in the DB.
-          - Update job status to 'succeeded' or 'failed' based on exit code.
-  4.  **Retry Logic:**
-      - If a job fails and retries are remaining:
-          - Increment retry count.
-          - Calculate next retry time using exponential backoff with jitter (e.g., `base_delay * (2^retry_count) * random(0.8, 1.2)`).
-          - Update status to 'retrying' and set `next_retry_time`.
-  5.  **Job Management Commands:**
-      - `list [--status <status>] [--name <name_pattern>] [--limit <N>]`: List jobs with filters.
-      - `status <job_id>`: Show detailed status and metadata for a specific job.
-      - `logs <job_id> [--stdout|--stderr]`: Display stdout or stderr for a completed/failed job.
-      - `cancel <job_id>`: Cancel a pending or retrying job. If running, attempt to kill it (best effort, using stored PID if feasible, though `nohup` makes this tricky without a wrapper).
-      - `retry <job_id>`: Manually mark a failed job as 'pending' to be retried on the next `process-queue` run, resetting its retry count or scheduling immediately.
-      - `clear-completed [--older-than <Nd|Nh|Nm>]`: Remove successfully completed jobs from the DB (optionally older than a certain duration).
-  6.  **Concurrency Handling (Basic):**
-      - When `process-queue` picks a job, it should update its status to 'running' atomically (or as close as possible with `sqlite3` CLI) to prevent other `process-queue` instances from picking the same job. This might involve storing the PID of the `process-queue` worker.
-  7.  **Logging:**
-      - The CLI tool itself should have operational logs (e.g., when jobs are added, processed, fail).
-      - Individual job stdout/stderr are stored in separate files per job execution attempt.
+description: "Implement a robust CLI tool for scheduling, executing, and managing local background jobs. Jobs are arbitrary shell commands. The system must handle asynchronous execution, persistent state, and sophisticated retry mechanisms for failed jobs."
 
 success_criteria:
-  - SQLite database is correctly initialized and used for persistent job state.
-  - `add` command correctly schedules jobs (now, at, delay) with specified parameters.
-  - `process-queue` command:
-      - Picks up due pending and retrying jobs.
-      - Executes jobs asynchronously, capturing their output and exit codes.
-      - Updates job status and log paths in the DB correctly.
-  - Exponential backoff with jitter is implemented for retries.
-  - `list`, `status`, `logs`, `cancel`, `retry`, `clear-completed` commands function as described.
-  - Basic concurrency protection prevents a single job from being processed multiple times simultaneously by `process-queue`.
-  - All tests pass with >90% coverage, verifying job lifecycle, scheduling, retry logic, output capturing, and management commands.
-  - Sample success/failure job scripts are used for testing.
-  - Solution is robust against common issues (e.g., command not found in job, script errors).
+  - "SQLite database is correctly initialized and used for persistent job state."
+  - "`add` command correctly schedules jobs (now, at, delay) with specified parameters."
+  - "Exponential backoff with jitter is implemented for retries."
+  - "`list`, `status`, `logs`, `cancel`, `retry`, `clear-completed` commands function as described."
+  - "Basic concurrency protection prevents a single job from being processed multiple times simultaneously by `process-queue`."
+  - "All tests pass with >90% coverage, verifying job lifecycle, scheduling, retry logic, output capturing, and management commands."
+  - "Sample success/failure job scripts are used for testing."
+  - "Solution is robust against common issues (e.g., command not found in job, script errors)."
