@@ -1,4 +1,3 @@
-# Default shell
 SHELL := /bin/bash
 
 DOCKER_COMPOSE := sudo docker-compose
@@ -7,7 +6,6 @@ APP_SERVICE_NAME := app
 .PHONY: all
 all: help
 
-# Help
 .PHONY: help
 help:
 	@echo "Available targets:"
@@ -22,9 +20,6 @@ help:
 	@echo "  supabase-logs  : View logs for Supabase services."
 	@echo "  clean          : Remove build artifacts and node_modules."
 
-# ------------------------------------------------------------------------------
-# Setup and Environment
-# ------------------------------------------------------------------------------
 .PHONY: setup
 setup: supabase-start npm-install supabase-init-db
 	@echo "Setup complete."
@@ -45,9 +40,6 @@ supabase-init-db:
 	@echo "Using docker-compose volumes for schema.sql + seed.sql."
 	@echo "To force re-initialization, run 'make supabase-stop' then 'make setup' again."
 
-# ------------------------------------------------------------------------------
-# Application Commands
-# ------------------------------------------------------------------------------
 .PHONY: build
 build:
 	@echo "Building CLI (TypeScript)..."
@@ -68,9 +60,6 @@ lint:
 	@echo "Linting with ESLint..."
 	$(DOCKER_COMPOSE) run --rm -T $(APP_SERVICE_NAME) npm run lint
 
-# ------------------------------------------------------------------------------
-# Supabase Docker Compose
-# ------------------------------------------------------------------------------
 .PHONY: supabase-start
 supabase-start:
 	@echo "Starting Supabase services..."
@@ -94,9 +83,6 @@ supabase-logs:
 	@echo "Tailing Supabase logs (Ctrl+C to stop)..."
 	$(DOCKER_COMPOSE) logs -f
 
-# ------------------------------------------------------------------------------
-# Clean
-# ------------------------------------------------------------------------------
 .PHONY: clean
 clean:
 	@echo "Cleaning up..."
