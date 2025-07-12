@@ -1,37 +1,30 @@
-# ---------- Base image ----------
 FROM node:18-slim
 
-# ---------- Set working directory ----------
 WORKDIR /app
 
-# ---------- Install essential tools ----------
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
     ca-certificates \
-    jq \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# ---------- Install TypeScript globally ----------
+# Install global TypeScript
 RUN npm install -g typescript
 
-# ---------- Install Supabase CLI ----------
-ENV SUPABASE_CLI_VERSION=2.30.4
-RUN curl -L "https://github.com/supabase/cli/releases/download/v${SUPABASE_CLI_VERSION}/supabase_${SUPABASE_CLI_VERSION}_linux_amd64.deb" \
-    -o supabase.deb \
- && apt-get update \
- && apt-get install -y ./supabase.deb \
- && rm supabase.deb \
- && rm -rf /var/lib/apt/lists/*
+# Install Supabase CLI
+RUN curl -L "https://github.com/supabase/cli/releases/download/v2.30.4/supabase_2.30.4_linux_amd64.deb" -o supabase.deb \
+    && dpkg -i supabase.deb \
+    && rm supabase.deb
 
-# ---------- Copy only required files first (for better caching) ----------
+# Copy package files and install dependencies first for better caching
 COPY package*.json ./
 
-# ---------- Install dependencies ----------
-RUN npm install
-
-# ---------- Copy remaining source files ----------
+# Copy all source files before npm install so prepare/build scripts work
 COPY . .
 
-# ---------- Default command ----------
-CMD [ "bash" ]
+# Install dependencies (this will now work because source files are present)
+RUN npm install
+
+# Default command (optional)
+CMD ["npm", "start"]

@@ -1,5 +1,5 @@
 TN:
-SF:src\utils\cli-handler.ts
+SF:src/utils/cli-handler.ts
 FN:6,handleTaskCommand
 FNF:1
 FNH:1

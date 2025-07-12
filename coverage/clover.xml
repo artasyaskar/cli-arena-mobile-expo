@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1752318126505" clover="3.2.0">
-  <project timestamp="1752318126506" name="All files">
+<coverage generated="1752322172129" clover="3.2.0">
+  <project timestamp="1752322172129" name="All files">
     <metrics statements="29" coveredstatements="29" conditionals="6" coveredconditionals="6" methods="1" coveredmethods="1" elements="36" coveredelements="36" complexity="0" loc="29" ncloc="29" packages="1" files="1" classes="1"/>
-    <file name="cli-handler.ts" path="D:\cli-arena-mobile-expo\src\utils\cli-handler.ts">
+    <file name="cli-handler.ts" path="/app/src/utils/cli-handler.ts">
       <metrics statements="29" coveredstatements="29" conditionals="6" coveredconditionals="6" methods="1" coveredmethods="1"/>
       <line num="1" count="1" type="stmt"/>
       <line num="2" count="1" type="stmt"/>
