@@ -3,58 +3,16 @@ title: "Advanced CLI for Batching and Simulating Expo Push Notifications"
 difficulty: ultra-hard
 estimated_time: 220
 tags: [cli, push-notifications, expo, batching, rate-limiting, templating, simulation]
-description: |
-  Implement a CLI tool that simulates the process of sending batched push notifications
-  via a mock Expo Push API. The tool should be highly configurable and provide
-  detailed feedback and reporting.
-
-  Key features and complexities:
-  1.  **Recipient Input:**
-      - Support for recipient lists from CSV files (with headers like 'expoPushToken', 'name', 'userId').
-      - Support for recipient lists from JSON files (array of objects, each with 'expoPushToken' and other metadata).
-  2.  **Message Templating:**
-      - Allow users to define a message template (title and body) in a separate file.
-      - Templates can contain placeholders (e.g., `{{name}}`, `{{userId}}`) that are
-        substituted with values from the recipient's metadata during batch construction.
-      - Support for default values for template placeholders if metadata is missing for a recipient.
-  3.  **Advanced Batching Logic:**
-      - Configurable maximum batch size (e.g., Expo's limit of 100 notifications per API call).
-      - Simulate API rate limits: The CLI should internally manage a configurable rate limit
-        (e.g., X batches per Y seconds). If the rate limit is hit, the CLI must pause
-        appropriately before sending the next batch.
-      - Option for 'dry-run' mode: construct batches and report what would be sent without actually calling the mock API.
-  4.  **Mock Expo API Interaction:**
-      - The CLI will interact with a `mock_expo_api.sh` script.
-      - The mock API should simulate various responses:
-          - Full batch success.
-          - Partial batch success (some tokens valid, some invalid/error).
-          - Full batch failure (e.g., server error, invalid API key - simulated).
-          - Rate limit exceeded error (HTTP 429).
-          - Per-token errors like `DeviceNotRegistered`, `MessageTooBig`, `InvalidCredentials`.
-  5.  **Resilience and Retries:**
-      - Implement retry logic for batches that fail due to transient errors (e.g., simulated network error, temporary server error from mock API).
-      - Configurable number of retries and backoff strategy (e.g., exponential).
-      - For batches with partial success/failure due to token-specific errors, do not retry the entire batch; only retryable systemic errors should trigger batch retries. Failed tokens should be reported.
-  6.  **Detailed Reporting:**
-      - After processing, generate a summary report:
-          - Total recipients.
-          - Total batches sent.
-          - Number of notifications successfully sent.
-          - Number of notifications failed, with a breakdown by error type (e.g., DeviceNotRegistered, RateLimited, APIServerError).
-          - List of specific tokens that failed and why.
-      - Option to output the report to a file (e.g., JSON or CSV).
-  7.  **Configuration:**
-      - Allow configuration via command-line arguments (e.g., input file, template file, batch size, rate limits, API endpoint).
-      - Potentially support a configuration file for common settings.
+description: "Implement a CLI tool that simulates the process of sending batched push notifications via a mock Expo Push API. The tool should be highly configurable and provide detailed feedback and reporting."
 
 success_criteria:
-  - CLI correctly parses recipients from both CSV and JSON files.
-  - Message templating with placeholder substitution (including defaults) works as expected.
-  - Batches are created according to the specified size limit.
-  - Simulated rate limiting is respected, with appropriate pauses.
-  - CLI interacts correctly with the mock Expo API, handling various success and error responses.
-  - Retry logic for transient batch failures is implemented with backoff.
-  - 'Dry-run' mode accurately reports intended actions without API calls.
-  - Comprehensive reports are generated, detailing successes, failures, and error categorizations.
-  - All tests pass, achieving >90% coverage, verifying all key functionalities including edge cases for parsing, templating, batching, rate limiting, API error handling, and reporting.
-  - Code is well-structured and handles potential errors gracefully (e.g., file not found, invalid template).
+  - "CLI correctly parses recipients from both CSV and JSON files."
+  - "Message templating with placeholder substitution (including defaults) works as expected."
+  - "Batches are created according to the specified size limit."
+  - "Simulated rate limiting is respected, with appropriate pauses."
+  - "CLI interacts correctly with the mock Expo API, handling various success and error responses."
+  - "Retry logic for transient batch failures is implemented with backoff."
+  - "'Dry-run' mode accurately reports intended actions without API calls."
+  - "Comprehensive reports are generated, detailing successes, failures, and error categorizations."
+  - "All tests pass, achieving >90% coverage, verifying all key functionalities including edge cases for parsing, templating, batching, rate limiting, API error handling, and reporting."
+  - "Code is well-structured and handles potential errors gracefully (e.g., file not found, invalid template)."

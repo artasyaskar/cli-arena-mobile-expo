@@ -3,55 +3,17 @@ title: "CLI Multi-Tenant Authentication with Role-Based Access Control"
 difficulty: ultra-hard
 estimated_time: 300
 tags: [cli, authentication, multi-tenant, rbac, session-management, api-client, supabase-like]
-description: |
-  Develop a CLI tool that implements a multi-tenant authentication system. Users first
-  authenticate globally, then can list and switch between tenants (organizations) they
-  belong to. Access to tenant-specific resources and CLI commands should be governed
-  by role-based access control (RBAC) within the context of the active tenant.
-
-  Key Features and Complexities:
-  1.  **Multi-Stage Authentication:**
-      - **Global Login (`login <username> <password>`):** Authenticates the user against a mock auth server. On success, receives a primary access token and a list of tenants the user is associated with, along with their roles in each tenant.
-      - **Tenant Selection (`switch-tenant <tenant_id>`):** Allows the user to select one of their authorized tenants as the active context. Upon selection, the CLI might fetch/generate a tenant-specific token or use the primary token with tenant context information for API calls.
-  2.  **Session and Token Management:**
-      - Securely store the primary authentication token and the currently active tenant context (ID and user's role in that tenant).
-      - Store the list of available tenants and roles for the logged-in user.
-      - Session data should persist across CLI invocations (e.g., in `~/.config/app-name/session.json`).
-  3.  **Role-Based Access Control (RBAC):**
-      - The `solution.sh` will include example CLI commands (e.g., `create-resource`, `delete-resource`, `view-settings`).
-      - Access to these commands will be controlled by the user's role within the currently active tenant. For example, an 'admin' role might access all commands, while a 'viewer' role might only access 'view-settings'.
-      - The mock tenant-specific API (`mock_tenant_api.sh`) should also simulate RBAC by potentially rejecting requests if the token/role implies insufficient permissions for the action.
-  4.  **Tenant-Contextual API Calls:**
-      - When making calls to the `mock_tenant_api.sh`, the CLI must include the active tenant ID and the (potentially tenant-specific) authentication token.
-      - The mock API will validate the token against the tenant context and role.
-  5.  **CLI Commands:**
-      - `login <username> <password>`: Authenticates and fetches tenant list.
-      - `logout`: Clears all session data.
-      - `list-tenants`: Displays tenants the user has access to and their role in each.
-      - `switch-tenant <tenant_id>`: Sets the active tenant context.
-      - `current-tenant`: Displays the currently active tenant and role.
-      - Example tenant-specific commands (e.g., `app create-item`, `app view-items`, `app admin-action`) that demonstrate RBAC.
-  6.  **Mock Servers:**
-      - **`mock_auth_server_multi_tenant.sh`**:
-          - `/login`: Takes username/password, returns primary token, list of {tenant_id, tenant_name, role}.
-          - (Optional) `/tenant-token`: Takes primary token and tenant_id, returns a tenant-specific access token if applicable.
-      - **`mock_tenant_api.sh`**:
-          - Simulates tenant-specific endpoints.
-          - Requires a valid token (primary or tenant-specific) and checks if the operation is allowed for the user's role in the tenant context.
-          - Uses `user_tenant_role_mappings.json` to define user-tenant-role relationships.
-  7.  **State Persistence:**
-      - The `user_tenant_role_mappings.json` file will serve as the "database" for user, tenant, and role information for the mock auth server.
-      - The CLI will store its current session state (primary token, active tenant, role) locally.
+description: "Develop a CLI tool that implements a multi-tenant authentication system. Users first authenticate globally, then can list and switch between tenants (organizations) they belong to. Access to tenant-specific resources and CLI commands should be governed by role-based access control (RBAC) within the context of the active tenant."
 
 success_criteria:
-  - CLI successfully implements the `login` command, fetching and storing primary token and tenant/role list.
-  - `list-tenants` correctly displays tenants and roles available to the logged-in user.
-  - `switch-tenant` command successfully changes the active tenant context.
-  - `current-tenant` displays the correct active tenant and role.
-  - Tenant-specific CLI commands are correctly enabled/disabled based on the user's role in the active tenant.
-  - Calls to `mock_tenant_api.sh` are correctly authorized based on the active tenant and role, and the API mock enforces this.
-  - `logout` command clears all session information.
-  - Session state is persisted and reloaded correctly across CLI invocations.
-  - All tests pass with >90% coverage, verifying all authentication flows, tenant switching, RBAC for CLI commands and API calls, and state management.
-  - Mock servers accurately simulate multi-tenant authentication and authorization logic based on `user_tenant_role_mappings.json`.
-  - Handles scenarios like attempting to switch to an unauthorized tenant, or accessing commands/API endpoints without sufficient permissions.
+  - "CLI successfully implements the `login` command, fetching and storing primary token and tenant/role list."
+  - "`list-tenants` correctly displays tenants and roles available to the logged-in user."
+  - "`switch-tenant` command successfully changes the active tenant context."
+  - "`current-tenant` displays the correct active tenant and role."
+  - "Tenant-specific CLI commands are correctly enabled/disabled based on the user's role in the active tenant."
+  - "Calls to `mock_tenant_api.sh` are correctly authorized based on the active tenant and role, and the API mock enforces this."
+  - "`logout` command clears all session information."
+  - "Session state is persisted and reloaded correctly across CLI invocations."
+  - "All tests pass with >90% coverage, verifying all authentication flows, tenant switching, RBAC for CLI commands and API calls, and state management."
+  - "Mock servers accurately simulate multi-tenant authentication and authorization logic based on `user_tenant_role_mappings.json`."
+  - "Handles scenarios like attempting to switch to an unauthorized tenant, or accessing commands/API endpoints without sufficient permissions."
