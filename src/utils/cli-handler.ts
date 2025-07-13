@@ -7,7 +7,7 @@ const AVAILABLE_TASKS = {
   'example-task': 'Run an example task for testing',
   'init-db': 'Initialize database schema and tables',
   'seed-data': 'Seed the database with initial data',
-  'test-task-id': 'Dummy task used only for testing' // ✅ Required for Jest test
+  'test-task-id': 'Dummy task used only for testing', // ✅ Required for Jest test
 } as const;
 
 type TaskId = keyof typeof AVAILABLE_TASKS;

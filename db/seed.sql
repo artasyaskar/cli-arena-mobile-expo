@@ -23,7 +23,7 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.generic_items (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id UUID,
   organization_id UUID REFERENCES public.organizations(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   description TEXT,
@@ -33,24 +33,6 @@ CREATE TABLE IF NOT EXISTS public.generic_items (
 );
 
 ALTER TABLE public.generic_items ENABLE ROW LEVEL SECURITY;
-
--- ============================================================
--- Policies
--- ============================================================
-CREATE POLICY "Allow individual full access to own generic items"
-  ON public.generic_items FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Allow organization members to read generic items in their org"
-  ON public.generic_items FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.organization_members om
-      WHERE om.organization_id = generic_items.organization_id
-        AND om.user_id = auth.uid()
-    )
-  );
 
 -- ============================================================
 -- Triggers
