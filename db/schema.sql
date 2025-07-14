@@ -11,6 +11,11 @@ END
 $$;
 
 -- ========================================
+-- GRANT supabase_admin TO postgres
+-- ========================================
+GRANT supabase_admin TO postgres;
+
+-- ========================================
 -- RESET ANY PREVIOUSLY SET ROLE
 -- ========================================
 RESET ROLE;
