@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1752405899813" clover="3.2.0">
-  <project timestamp="1752405899814" name="All files">
+<coverage generated="1752478002750" clover="3.2.0">
+  <project timestamp="1752478002750" name="All files">
     <metrics statements="142" coveredstatements="99" conditionals="23" coveredconditionals="16" methods="8" coveredmethods="6" elements="173" coveredelements="121" complexity="0" loc="142" ncloc="142" packages="1" files="1" classes="1"/>
     <file name="cli-handler.ts" path="/app/src/utils/cli-handler.ts">
       <metrics statements="142" coveredstatements="99" conditionals="23" coveredconditionals="16" methods="8" coveredmethods="6"/>

@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-DOCKER_COMPOSE := sudo docker compose
+DOCKER_COMPOSE := sudo docker-compose
 APP_SERVICE_NAME := app
 
 # ========================
@@ -96,24 +96,26 @@ lint:
 .PHONY: supabase-start
 supabase-start:
 	@echo "🟢 Starting Supabase services..."
-	./scripts/start_db.sh
+	$(DOCKER_COMPOSE) up -d db auth rest realtime storage-api
+	@sleep 10
+	$(DOCKER_COMPOSE) ps
 	@echo "✅ Supabase services started."
 
 .PHONY: supabase-stop
 supabase-stop:
 	@echo "🛑 Stopping Supabase services..."
-	sudo docker stop cli-arena-mobile-expo-db-1
-	sudo docker rm cli-arena-mobile-expo-db-1
+	$(DOCKER_COMPOSE) down -v --remove-orphans
+
 
 .PHONY: supabase-status
 supabase-status:
 	@echo "📊 Supabase service status:"
-	sudo docker ps
+	$(DOCKER_COMPOSE) ps
 
 .PHONY: supabase-logs
 supabase-logs:
 	@echo "📜 Tailing Supabase logs (Ctrl+C to stop)..."
-	sudo docker logs -f cli-arena-mobile-expo-db-1
+	$(DOCKER_COMPOSE) logs -f
 
 # ========================
 # CLEANUP
