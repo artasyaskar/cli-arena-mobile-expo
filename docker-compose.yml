@@ -1,12 +1,12 @@
 services:
   db:
-    image: supabase/postgres:15.8.1.060
+    image: supabase/postgres:15.1.1.20
     container_name: cli-arena-mobile-expo-db-1
     ports:
       - "54322:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: your_strong_password
       POSTGRES_DB: postgres
     volumes:
       - supabase_db_data:/var/lib/postgresql/data
@@ -24,7 +24,7 @@ services:
       GOTRUE_API_HOST: "0.0.0.0"
       GOTRUE_API_PORT: "9999"
       GOTRUE_DB_DRIVER: "postgres"
-      GOTRUE_DB_DATABASE_URL: "postgresql://postgres:password@db:5432/postgres"
+      GOTRUE_DB_DATABASE_URL: "postgresql://postgres:your_strong_password@db:5432/postgres"
       GOTRUE_JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters-long"
       GOTRUE_JWT_EXP: "3600"
     depends_on:
@@ -34,7 +34,7 @@ services:
   rest:
     image: postgrest/postgrest:v11.2.2
     environment:
-      PGRST_DB_URI: "postgresql://postgres:password@db:5432/postgres"
+      PGRST_DB_URI: "postgresql://postgres:your_strong_password@db:5432/postgres"
       PGRST_DB_SCHEMA: "public,storage"
       PGRST_DB_ANON_ROLE: "anon"
     depends_on:
@@ -47,7 +47,7 @@ services:
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASSWORD: password
+      DB_PASSWORD: your_strong_password
       DB_NAME: postgres
       DB_SSL: "false"
       PORT: 4000
