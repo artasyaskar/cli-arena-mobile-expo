@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-DOCKER_COMPOSE := sudo docker-compose
+DOCKER_COMPOSE := sudo docker compose
 APP_SERVICE_NAME := app
 
 # ========================
